@@ -18,6 +18,7 @@ msgid "maceth"
 msgid "Network Interface"
 msgstr "网络接口"
 
+msgid "awake"
 msgid "Awake"
 msgstr "唤醒"
 
