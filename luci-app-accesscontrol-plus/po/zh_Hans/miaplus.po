@@ -4,6 +4,18 @@ msgstr "上网时间控制Plus"
 msgid "Access Schedule Control Description"
 msgstr "设置客户端访问互联网的时间"
 
+msgid "Base Setting"
+msgstr "基础设置"
+
+msgid "Advance Setting"
+msgstr "高级设置"
+
+msgid "Enabled"
+msgstr "开启"
+
+msgid "IPV6 Enabled"
+msgstr "开启 IPV6"
+
 msgid "General switch"
 msgstr "开启/关闭"
 
