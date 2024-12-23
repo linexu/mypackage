@@ -83,7 +83,7 @@ endchoice
 
 choice
 	prompt "Shadowsocks Client Selection"
-	default PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client if aarch64 || x86_64
+	default PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client if aarch64 || x86_64
 	default PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client
 
 	config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_NONE_Client
@@ -118,7 +118,7 @@ endchoice
 
 choice
 	prompt "V2ray-core Selection"
-	default PACKAGE_$(PKG_NAME)_INCLUDE_Xray if aarch64||arm||i386||x86_64
+	default PACKAGE_$(PKG_NAME)_INCLUDE_V2ray if aarch64||arm||i386||x86_64
 	default PACKAGE_$(PKG_NAME)_INCLUDE_NONE_V2RAY
 
 	config PACKAGE_$(PKG_NAME)_INCLUDE_NONE_V2RAY
@@ -133,7 +133,7 @@ endchoice
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS_NG
 	bool "Include ChinaDNS-NG"
-	default n
+	default y
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_MosDNS
 	bool "Include MosDNS"
@@ -142,7 +142,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_MosDNS
 config PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria
 	bool "Include Hysteria"
 	select PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS_NG
-	default n
+	default y
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_Tuic_Client
 	bool "Include Tuic-Client"
@@ -150,7 +150,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_Tuic_Client
 	select PACKAGE_$(PKG_NAME)_INCLUDE_IPT2Socks
 	depends on aarch64||arm||i386||x86_64
 	depends on !(TARGET_x86_geode||TARGET_x86_legacy)
-	default n
+	default y
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_Shadow_TLS
 	bool "Include Shadow-TLS"
@@ -158,24 +158,24 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_Shadow_TLS
 	select PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client
 	depends on aarch64||arm||x86_64
 	depends on !(TARGET_x86_geode||TARGET_x86_legacy)
-	default n
+	default y
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_IPT2Socks
 	bool "Include IPT2Socks"
-	default n
+	default y
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun
 	bool "Include Kcptun"
-	default n
+	default y
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
 	bool "Include NaiveProxy"
 	depends on !(arc||armeb||mips||mips64||powerpc||TARGET_gemini)
-	default n
+	default y
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_Redsocks2
 	bool "Include Redsocks2"
-	default n
+	default y
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Simple_Obfs
 	bool "Include Shadowsocks Simple Obfs Plugin"
@@ -183,7 +183,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Simple_Obfs
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_V2ray_Plugin
 	bool "Include Shadowsocks V2ray Plugin"
-	default n
+	default y
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Client
 	bool "Include ShadowsocksR Libev Client"
@@ -196,7 +196,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Server
 config PACKAGE_$(PKG_NAME)_INCLUDE_Trojan
 	bool "Include Trojan"
 	select PACKAGE_$(PKG_NAME)_INCLUDE_IPT2Socks
-	default n
+	default y
 
 endef
 
