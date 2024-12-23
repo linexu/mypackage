@@ -125,7 +125,7 @@ msgid "Direct DNS DoH"
 msgstr "直连 DNS DoH"
 
 msgid "Direct DNS EDNS Client Subnet"
-msgstr "直连 DNS EDNS Client Subnet"
+msgstr "直连 DNS EDNS 客户端子网"
 
 msgid "Remote DNS Protocol"
 msgstr "远程 DNS 协议"
@@ -137,7 +137,7 @@ msgid "Remote DNS DoH"
 msgstr "远程 DNS DoH"
 
 msgid "Remote DNS EDNS Client Subnet"
-msgstr "远程 DNS EDNS Client Subnet"
+msgstr "远程 DNS EDNS 客户端子网"
 
 msgid "Notify the DNS server when the DNS query is notified, the location of the client (cannot be a private IP address)."
 msgstr "用于 DNS 查询时通知 DNS 服务器，客户端所在的地理位置（不能是私有 IP 地址）。"
