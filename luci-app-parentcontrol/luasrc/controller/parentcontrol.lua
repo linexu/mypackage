@@ -3,7 +3,7 @@ module("luci.controller.parentcontrol", package.seeall)
 function index()
     if not nixio.fs.access("/etc/config/parentcontrol") then return end
         entry({"admin", "network"}, firstchild(), "Network", 44).dependent = false
-	local e = entry({"admin", "network", "parentcontrol"}, firstchild(), _("Parent Control"), 290)
+	local e = entry({"admin", "network", "parentcontrol"}, firstchild(), _("Parent Control"), 130)
 	e.dependent=false
 	e.acl_depends = { "luci-app-parentcontrol" }
 	entry({"admin", "network", "parentcontrol","time"}, cbi("parentcontrol/time"), _("Time Control"), 10).leaf=true
