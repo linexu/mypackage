@@ -14,7 +14,7 @@ PKG_LICENSE_FILES:=LICENSE
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/mypackage/my-settings
+define Package/$(PKG_NAME)
   SECTION:=luci
   CATEGORY:=LuCI
   TITLE:=LuCI support for My X86 Default Settings
@@ -23,14 +23,14 @@ define Package/mypackage/my-settings
 
 endef
 
-define Package/mypackage/my-settings/description
+define Package/$(PKG_NAME)/description
     Language Support Packages.
 endef
 
 define Build/Compile
 endef
 
-define Package/mypackage/my-settings/install
+define Package/$(PKG_NAME)/install
     $(INSTALL_DIR) $(1)/etc/uci-defaults
     $(INSTALL_BIN) ./files/my-default-settings $(1)/etc/uci-defaults/99-my-settings
     
@@ -40,4 +40,4 @@ define Package/mypackage/my-settings/install
 
 endef
 
-$(eval $(call BuildPackage,my-settings))
+$(eval $(call BuildPackage,$(PKG_NAME)))
