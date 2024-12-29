@@ -1,0 +1,192 @@
+
+config dnsmasq
+	option domainneeded '1'
+	option localise_queries '1'
+	option rebind_protection '1'
+	option rebind_localhost '1'
+	option local '/lan/'
+	option domain 'lan'
+	option expandhosts '1'
+	option authoritative '1'
+	option readethers '1'
+	option leasefile '/tmp/dhcp.leases'
+	option nonwildcard '1'
+	option localservice '1'
+	option port '53'
+	option filter_aaaa '1'
+	option resolvfile '/tmp/resolv.conf.d/resolv.conf.auto'
+	option localuse '1'
+	option noresolv '0'
+
+config dhcp 'lan'
+	option interface 'lan'
+	option start '100'
+	option limit '150'
+	option ra_slaac '1'
+	list ra_flags 'managed-config'
+	list ra_flags 'other-config'
+	list ra_flags 'managed-config'
+	list ra_flags 'other-config'
+	list ra_flags 'managed-config'
+	list ra_flags 'other-config'
+	option dhcpv4 'server'
+	option leasetime 'infinite'
+	option dynamicdhcp '0'
+
+config dhcp 'wan'
+	option interface 'wan'
+	option ignore '1'
+
+config odhcpd 'odhcpd'
+	option maindhcp '0'
+	option leasefile '/tmp/hosts/odhcpd'
+	option leasetrigger '/usr/sbin/odhcpd-update'
+	option loglevel '4'
+
+config srvhost
+	option srv '_vlmcs._tcp'
+	option target 'OpenWrt'
+	option port '1688'
+	option class '0'
+	option weight '100'
+
+config host
+	option name 'Optiplex9010'
+	option dns '1'
+	option mac '5c:f9:dd:76:3e:46'
+	option ip '192.168.1.100'
+	option leasetime 'infinite'
+
+config host
+	option name 'iPhone14ProMaxBlack'
+	option dns '1'
+	option mac '90:EC:EA:14:7B:DA'
+	option ip '192.168.1.102'
+	option leasetime 'infinite'
+
+config host
+	option name 'DELLG3-3579-WLAN'
+	option dns '1'
+	option mac '54:BF:64:1B:5D:22'
+	option ip '192.168.1.108'
+	option leasetime 'infinite'
+
+config host
+	option name 'DELLG3-3579-WIFI'
+	option dns '1'
+	option mac '7C:2A:31:3F:E1:75'
+	option ip '192.168.1.109'
+	option leasetime 'infinite'
+
+config host
+	option name 'IPADPRO-14'
+	option dns '1'
+	option mac 'DC:D3:A2:DB:41:E5'
+	option ip '192.168.1.110'
+	option leasetime 'infinite'
+
+config host
+	option name 'IPADPRO-15'
+	option dns '1'
+	option mac 'DC:D3:A2:D2:F5:64'
+	option ip '192.168.1.111'
+	option leasetime 'infinite'
+
+config host
+	option name 'IPhoneSE'
+	option dns '1'
+	option mac '50:82:D5:DF:43:71'
+	option ip '192.168.1.115'
+	option leasetime 'infinite'
+
+config host
+	option name 'SHARP60-WIFI'
+	option dns '1'
+	option mac '54:27:1E:7E:DF:04'
+	option ip '192.168.1.120'
+	option leasetime 'infinite'
+
+config host
+	option name 'SHARP60'
+	option dns '1'
+	option mac '24:26:42:3A:DA:0C'
+	option ip '192.168.1.121'
+	option leasetime 'infinite'
+
+config host
+	option name 'Canon-G15'
+	option dns '1'
+	option mac '18:0C:AC:D7:B5:E5'
+	option ip '192.168.1.122'
+	option leasetime 'infinite'
+
+config host
+	option name 'IPadAir'
+	option dns '1'
+	option mac '90:B9:31:EA:55:B6'
+	option ip '192.168.1.130'
+	option leasetime 'infinite'
+
+config host
+	option name 'INSPIRON-N4050-WIFI'
+	option dns '1'
+	option mac 'E0:06:E6:AD:07:12'
+	option ip '192.168.1.131'
+	option leasetime 'infinite'
+
+config host
+	option name 'INSPIRON-N4050'
+	option dns '1'
+	option mac '78:45:C4:A5:66:96'
+	option ip '192.168.1.132'
+	option leasetime 'infinite'
+
+config host
+	option name 'Debian12-Home'
+	option dns '1'
+	option mac 'BC:24:11:CD:C3:3E'
+	option ip '192.168.1.250'
+	option leasetime 'infinite'
+
+config host
+	option dns '1'
+	option ip '192.168.1.252'
+	option leasetime 'infinite'
+	option name 'Debian12-Test'
+	option mac 'BC:24:11:FF:0E:6C'
+
+config host
+	option name 'IPhone5'
+	option dns '1'
+	option mac '04:F7:E4:1B:E6:54'
+	option ip '192.168.1.123'
+	option leasetime 'infinite'
+
+config host
+	option name 'Debian12.8'
+	option dns '1'
+	option mac 'BC:24:11:FA:34:25'
+	option ip '192.168.1.251'
+	option leasetime 'infinite'
+
+config host
+	option name 'Debian'
+	option dns '1'
+	option mac '00:0C:29:1B:27:34'
+	option ip '192.168.1.133'
+	option leasetime 'infinite'
+
+config host
+	option name 'OpenWRT-200'
+	option dns '1'
+	option mac 'bc:24:11:5f:74:78'
+	option ip '192.168.1.200'
+	option leasetime 'infinite'
+
+config host
+	option name 'OpenWRT-200'
+	option dns '1'
+	option leasetime 'infinite'
+	option mac 'BC:24:11:D7:7A:20'
+	option ip '192.168.1.2'
+
