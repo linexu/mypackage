@@ -72,30 +72,5 @@ sed -i '/id = server.vmess_id,/a\ \t\t\t\t\t\talterId = (server.v2ray_protocol =
 sed -i 's#root::0:0:99999:7:::#root:$5$qY781.vtG9/2AHhK$QHezq5zRqwAunTctzGwLhDHfYfsrBiY9qeSxymZCaU6:20086:0:99999:7:::#g' /etc/shadow
 sed -i 's#root:::0:99999:7:::#root:$5$qY781.vtG9/2AHhK$QHezq5zRqwAunTctzGwLhDHfYfsrBiY9qeSxymZCaU6:20086:0:99999:7:::#g' /etc/shadow
 
-# 修改插件安裝後的顯示路徑
-sed -i 's/admin\/services\/nlbw/admin\/network\/nlbw/' feeds/luci/applications/luci-app-nlbwmon/root/usr/share/luci/menu.d/luci-app-nlbwmon.json
-sed -i 's/"order": 80/"order": 150/' feeds/luci/applications/luci-app-nlbwmon/root/usr/share/luci/menu.d/luci-app-nlbwmon.json
-sed -i 's/admin\/services\/banip/admin\/network\/banip/' feeds/luci/applications/luci-app-banip/root/usr/share/luci/menu.d/luci-app-banip.json
-sed -i 's/banIP/BanIP/' feeds/luci/applications/luci-app-banip/root/usr/share/luci/menu.d/luci-app-banip.json
-sed -i 's/"60"/160/' feeds/luci/applications/luci-app-banip/root/usr/share/luci/menu.d/luci-app-banip.json
-sed -i 's/admin\/services\/hd_idle/admin\/network\/hd_idle/' feeds/luci/applications/luci-app-hd-idle/root/usr/share/luci/menu.d/luci-app-hd-idle.json
-sed -i 's/"order": 60/"order": 170/' feeds/luci/applications/luci-app-hd-idle/root/usr/share/luci/menu.d/luci-app-hd-idle.json
-sed -i 's/admin\/services\/upnp/admin\/network\/upnp/' feeds/luci/applications/luci-app-upnp/root/usr/share/luci/menu.d/luci-app-upnp.json
-sed -i '3a\		"order": 180,' feeds/luci/applications/luci-app-upnp/root/usr/share/luci/menu.d/luci-app-upnp.json
-sed -i 's/admin\/services\/p910nd/admin\/network\/p910nd/' feeds/luci/applications/luci-app-p910nd/root/usr/share/luci/menu.d/luci-app-p910nd.json
-sed -i 's/"order": 60/"order": 200/' feeds/luci/applications/luci-app-p910nd/root/usr/share/luci/menu.d/luci-app-p910nd.json
-sed -i 's/admin\/services\/ttyd/admin\/system\/ttyd/' feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/luci-app-ttyd.json
-sed -i 's/"title": "Terminal"/"title": "TTYD Terminal"/' feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/luci-app-ttyd.json
-sed -i '3a\		"order": 40,' feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/luci-app-ttyd.json
-sed -i "s#'/bin/login'#'/bin/login -f root'#" feeds/packages/utils/ttyd/files/ttyd.config
-sed -i 's/"Terminal"/"TTYD Terminal"/' feeds/luci/applications/luci-app-ttyd/po/zh_Hans/ttyd.po
-sed -i 's/"终端"/"TTYD 终端"/' feeds/luci/applications/luci-app-ttyd/po/zh_Hans/ttyd.po
-sed -i 's/"Terminal"/"TTYD Terminal"/' feeds/luci/applications/luci-app-ttyd/po/zh_Hant/ttyd.po
-sed -i 's/"終端"/"TTYD 終端"/' feeds/luci/applications/luci-app-ttyd/po/zh_Hant/ttyd.po
-sed -i 's/443 ssl/80/' feeds/packages/net/nginx-util/files/nginx.config
-sed -i '/\/etc\/init\.d\/tailscale/d;/\/etc\/config\/tailscale/d;' feeds/packages/net/tailscale/Makefile
-sed -i '/6/8/' feeds/luci/applications/luci-app-mwan3/htdocs/luci-static/resources/view/mwan3/mwan3.css
-sed -i 's/101/190/' package/turboacc/luci-app-turboacc/luasrc/controller/turboacc.lua
-
 
 exit 0
