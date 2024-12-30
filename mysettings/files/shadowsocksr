@@ -57,6 +57,7 @@ config servers
 	option mux '0'
 	option local_port '1234'
 	option server '192.168.1.250'
+	option ip '192.168.1.250'
 
 config servers
 	option switch_enable '0'
@@ -121,16 +122,18 @@ config global
 	option nfip_url 'https://fastly.jsdelivr.net/gh/QiuSimons/Netflix_IP/NF_only.txt'
 	option adblock_url 'https://anti-ad.net/anti-ad-for-dnsmasq.conf'
 	option global_server 'cfg064a8f'
-	option run_mode 'all'
+	option run_mode 'router'
 
 config server_subscribe
 	option auto_update '1'
 	option filter_words '过期时间/剩余流量/QQ群/官网/防失联地址/回国'
 	option switch '0'
-	option auto_update_time '1'
 	list subscribe_url 'https://raw.githubusercontent.com/linexu/ssr/refs/heads/main/ssr'
 	list subscribe_url 'https://xuline.us.kg/xxxxxx?b64'
 	option proxy '0'
+	option auto_update_week_time '*'
+	option auto_update_day_time '1'
+	option auto_update_min_time '0'
 
 config access_control
 	option lan_ac_mode '0'
@@ -152,4 +155,8 @@ config socks5_proxy
 
 config server_global
 	option enable_server '0'
+
+config global_xray_fragment
+	option fragment '0'
+	option noise '0'
 

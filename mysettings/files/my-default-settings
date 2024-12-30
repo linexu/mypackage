@@ -92,6 +92,7 @@ sed -i 's/"Terminal"/"TTYD Terminal"/' feeds/luci/applications/luci-app-ttyd/po/
 sed -i 's/"終端"/"TTYD 終端"/' feeds/luci/applications/luci-app-ttyd/po/zh_Hant/ttyd.po
 sed -i 's/443 ssl/80/' feeds/packages/net/nginx-util/files/nginx.config
 sed -i '/\/etc\/init\.d\/tailscale/d;/\/etc\/config\/tailscale/d;' feeds/packages/net/tailscale/Makefile
+sed -i '/6/8/' feeds/luci/applications/luci-app-mwan3/htdocs/luci-static/resources/view/mwan3/mwan3.css
 
 
 exit 0
