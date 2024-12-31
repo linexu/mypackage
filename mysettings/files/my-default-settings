@@ -69,8 +69,8 @@ sed -i '/id = server.vmess_id,/a\ \t\t\t\t\t\talterId = (server.v2ray_protocol =
 #sed -i 's/root::0:0:99999:7:::/root:$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.:0:0:99999:7:::/g' /etc/shadow
 #sed -i 's/root:::0:99999:7:::/root:$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.:0:0:99999:7:::/g' /etc/shadow
 
-sed -i 's#root::0:0:99999:7:::#root:$5$qY781.vtG9/2AHhK$QHezq5zRqwAunTctzGwLhDHfYfsrBiY9qeSxymZCaU6:20086:0:99999:7:::#g' /etc/shadow
 sed -i 's#root:::0:99999:7:::#root:$5$qY781.vtG9/2AHhK$QHezq5zRqwAunTctzGwLhDHfYfsrBiY9qeSxymZCaU6:20086:0:99999:7:::#g' /etc/shadow
+sed -i 's#root::0:0:99999:7:::#root:$5$qY781.vtG9/2AHhK$QHezq5zRqwAunTctzGwLhDHfYfsrBiY9qeSxymZCaU6:20086:0:99999:7:::#g' /etc/shadow
 
 
 exit 0
