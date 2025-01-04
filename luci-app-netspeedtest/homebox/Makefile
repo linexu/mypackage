@@ -5,7 +5,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=homebox
-PKG_VERSION:=0.1.0
+PKG_VERSION:=0.0.0
 PKG_RELEASE:=3
 
 ifeq ($(ARCH),aarch64)
@@ -42,8 +42,8 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Prepare
-	[ ! -f $(PKG_BUILD_DIR)/server_Linux_$(H_ARCH).tar.gz ] && wget https://github.com/XGHeaven/homebox/releases/download/v$(PKG_VERSION)-dev.2024112600/$(PKG_NAME)-linux-$(H_ARCH).tar.gz -O $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(H_ARCH).tar.gz
-	tar -xzvf $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(H_ARCH).tar.gz -C $(PKG_BUILD_DIR)
+	[ ! -f $(PKG_BUILD_DIR)/server_Linux_$(H_ARCH).tar.gz ] && wget https://github.com/XGHeaven/homebox/releases/download/v$(PKG_VERSION)-dev.2023102203/server-linux-$(H_ARCH).tar.gz -O $(PKG_BUILD_DIR)/server-linux-$(H_ARCH).tar.gz
+	tar -xzvf $(PKG_BUILD_DIR)/server-linux-$(H_ARCH).tar.gz -C $(PKG_BUILD_DIR)
 endef
 
 define Build/Compile
@@ -51,7 +51,7 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(H_ARCH) $(1)/usr/bin/$(PKG_NAME)
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/server-linux-$(H_ARCH) $(1)/usr/bin/homebox
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
