@@ -123,8 +123,6 @@ for k, v in pairs(nodes_table) do
 	socks_node:value(v.id, v["remark"])
 end
 
-o = s:option(DummyValue, "btn", " ")
-o.template = appname .. "/socks_auto_switch/btn"
-o:depends("enable_autoswitch", true)
+m:append(Template(appname .. "/socks_auto_switch/footer"))
 
 return m
