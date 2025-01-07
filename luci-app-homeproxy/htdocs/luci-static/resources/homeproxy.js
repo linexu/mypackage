@@ -11,6 +11,7 @@
 'require rpc';
 'require uci';
 'require ui';
+'require validation';
 
 return baseclass.extend({
 	dns_strategy: {
@@ -62,16 +63,6 @@ return baseclass.extend({
 		'1.2',
 		'1.3'
 	],
-
-	CBIStaticList: form.DynamicList.extend({
-		__name__: 'CBI.StaticList',
-
-		renderWidget: function(/* ... */) {
-			var dl = form.DynamicList.prototype.renderWidget.apply(this, arguments);
-			dl.querySelector('.add-item ul > li[data-value="-"]').remove();
-			return dl;
-		}
-	}),
 
 	calcStringMD5: function(e) {
 		/* Thanks to https://stackoverflow.com/a/41602636 */
@@ -170,7 +161,7 @@ return baseclass.extend({
 	},
 
 	getBuiltinFeatures: function() {
-		const callGetSingBoxFeatures = rpc.declare({
+		var callGetSingBoxFeatures = rpc.declare({
 			object: 'luci.homeproxy',
 			method: 'singbox_get_features',
 			expect: { '': {} }
@@ -193,7 +184,8 @@ return baseclass.extend({
 				).join('');
 			case 'uuid':
 				/* Thanks to https://stackoverflow.com/a/2117523 */
-				return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, (c) =>
+				return (location.protocol === 'https:') ? crypto.randomUUID() :
+				([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, (c) =>
 					(c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
 				);
 			default:
@@ -216,19 +208,55 @@ return baseclass.extend({
 		return label ? title + ' » ' + label : addtitle;
 	},
 
-	renderSectionAdd: function(section, extra_class) {
+	loadSubscriptionInfo: function(uciconfig) {
+		var subs = {};
+		for (var suburl of (uci.get(uciconfig, 'subscription', 'subscription_url') || [])) {
+			const url = new URL(suburl);
+			const urlhash = this.calcStringMD5(suburl.replace(/#.*$/, ''));
+			subs[urlhash] = {
+				"url": suburl.replace(/#.*$/, ''),
+				"name": url.hash ? decodeURIComponent(url.hash.slice(1)) : url.hostname
+			};
+		}
+		return subs;
+	},
+
+	loadNodesList: function(uciconfig, subinfo) {
+		var nodelist = {};
+		uci.sections(uciconfig, 'node', (res) => {
+			var nodeaddr = ((res.type === 'direct') ? res.override_address : res.address) || '',
+			    nodeport = ((res.type === 'direct') ? res.override_port : res.port) || '';
+
+			nodelist[res['.name']] =
+				String.format('%s [%s] %s', res.grouphash ?
+					String.format('[%s]', subinfo[res.grouphash]?.name || res.grouphash) : '',
+					res.type, res.label || ((validation.parseIPv6(nodeaddr) ?
+					String.format('[%s]', nodeaddr) : nodeaddr) + ':' + nodeport));
+		});
+		return nodelist;
+	},
+
+	renderSectionAdd: function(section, prefmt, LC, extra_class) {
 		var el = form.GridSection.prototype.renderSectionAdd.apply(section, [ extra_class ]),
 			nameEl = el.querySelector('.cbi-section-create-name');
 		ui.addValidator(nameEl, 'uciname', true, (v) => {
 			var button = el.querySelector('.cbi-section-create > .cbi-button-add');
 			var uciconfig = section.uciconfig || section.map.config;
+			var prefix = prefmt?.prefix ? prefmt.prefix : '',
+				suffix = prefmt?.suffix ? prefmt.suffix : '';
 
 			if (!v) {
 				button.disabled = true;
 				return true;
+			} else if (LC && (v !== v.toLowerCase())) {
+				button.disabled = true;
+				return _('Expecting: %s').format(_('Lowercase only'));
 			} else if (uci.get(uciconfig, v)) {
 				button.disabled = true;
 				return _('Expecting: %s').format(_('unique UCI identifier'));
+			} else if (uci.get(uciconfig, prefix + v + suffix)) {
+				button.disabled = true;
+				return _('Expecting: %s').format(_('unique label'));
 			} else {
 				button.disabled = null;
 				return true;
@@ -238,8 +266,15 @@ return baseclass.extend({
 		return el;
 	},
 
+	handleAdd: function(section, prefmt, ev, name) {
+		var prefix = prefmt?.prefix ? prefmt.prefix : '',
+			suffix = prefmt?.suffix ? prefmt.suffix : '';
+
+		return form.GridSection.prototype.handleAdd.apply(section, [ ev, prefix + name + suffix ]);
+	},
+
 	uploadCertificate: function(option, type, filename, ev) {
-		const callWriteCertificate = rpc.declare({
+		var callWriteCertificate = rpc.declare({
 			object: 'luci.homeproxy',
 			method: 'certificate_write',
 			params: ['filename'],
@@ -263,14 +298,6 @@ return baseclass.extend({
 		if (section_id && value)
 			if (value.length !== length || !value.match(/^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/) || value[length-1] !== '=')
 				return _('Expecting: %s').format(_('valid base64 key with %d characters').format(length));
-
-		return true;
-	},
-
-	validateCertificatePath: function(section_id, value) {
-		if (section_id && value)
-			if (!value.match(/^(\/etc\/homeproxy\/certs\/|\/etc\/acme\/|\/etc\/ssl\/).+$/))
-				return _('Expecting: %s').format(_('/etc/homeproxy/certs/..., /etc/acme/..., /etc/ssl/...'));
 
 		return true;
 	},

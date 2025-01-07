@@ -54,6 +54,8 @@ uci commit firewall
 
 # 配置DHCP和SSR+
 mv /usr/share/linshi/dhcp /etc/config/
+mv /usr/share/linshi/passwall /etc/config/
+mv /usr/share/linshi/homeproxy /etc/config/
 mv /usr/share/linshi/shadowsocksr /etc/config/
 #mv /usr/share/linshi/nft-qos /etc/config/
 
