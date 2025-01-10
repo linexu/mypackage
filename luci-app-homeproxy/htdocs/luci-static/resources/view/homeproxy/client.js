@@ -156,7 +156,7 @@ return view.extend({
 		o.rmempty = false;
 
 		o = s.taboption('routing', form.Value, 'dns_server', _('DNS server'),
-			_('It MUST support TCP query.'));
+			_('Support UDP, TCP, DoH, DoQ, DoT. TCP protocol will be used if not specified.'));
 		o.value('wan', _('WAN DNS (read from interface)'));
 		o.value('1.1.1.1', _('CloudFlare Public DNS (1.1.1.1)'));
 		o.value('208.67.222.222', _('Cisco Public DNS (208.67.222.222)'));
@@ -170,53 +170,61 @@ return view.extend({
 		o.depends({'routing_mode': 'custom', '!reverse': true});
 		o.validate = function(section_id, value) {
 			if (section_id && !['wan'].includes(value)) {
-				var ipv6_support = this.map.lookupOption('ipv6_support', section_id)[0].formvalue(section_id);
-
 				if (!value)
 					return _('Expecting: %s').format(_('non-empty value'));
-				else if (!stubValidator.apply((ipv6_support === '1') ? 'ipaddr' : 'ip4addr', value))
-					return _('Expecting: %s').format(_('valid IP address'));
+
+				var ipv6_support = this.map.lookupOption('ipv6_support', section_id)[0].formvalue(section_id);
+				try {
+					var url = new URL(value);
+					if (stubValidator.apply('hostname', url.hostname))
+						return true;
+					else if (stubValidator.apply('ip4addr', url.hostname))
+						return true;
+					else if ((ipv6_support === '1') && stubValidator.apply('ip6addr', url.hostname.match(/^\[(.+)\]$/)?.[1]))
+						return true;
+					else
+						return _('Expecting: %s').format(_('valid DNS server address'));
+				} catch(e) {}
+
+				if (!stubValidator.apply((ipv6_support === '1') ? 'ipaddr' : 'ip4addr', value))
+					return _('Expecting: %s').format(_('valid DNS server address'));
 			}
 
 			return true;
 		}
 
-		if (features.hp_has_chinadns_ng) {
-			o = s.taboption('routing', form.DynamicList, 'china_dns_server', _('China DNS server'));
-			o.value('wan', _('WAN DNS (read from interface)'));
-			o.value('223.5.5.5', _('Aliyun Public DNS (223.5.5.5)'));
-			o.value('210.2.4.8', _('CNNIC Public DNS (210.2.4.8)'));
-			o.value('119.29.29.29', _('Tencent Public DNS (119.29.29.29)'));
-			o.value('117.50.10.10', _('ThreatBook Public DNS (117.50.10.10)'));
-			o.depends('routing_mode', 'bypass_mainland_china');
-			o.validate = function(section_id) {
-				if (section_id) {
-					var value = this.map.lookupOption('china_dns_server', section_id)[0].formvalue(section_id);
-					if (value.length < 1)
+		o = s.taboption('routing', form.Value, 'china_dns_server', _('China DNS server'),
+			_('The dns server for resolving China domains. Support UDP, TCP, DoH, DoQ, DoT.'));
+		o.value('wan', _('WAN DNS (read from interface)'));
+		o.value('223.5.5.5', _('Aliyun Public DNS (223.5.5.5)'));
+		o.value('210.2.4.8', _('CNNIC Public DNS (210.2.4.8)'));
+		o.value('119.29.29.29', _('Tencent Public DNS (119.29.29.29)'));
+		o.value('117.50.10.10', _('ThreatBook Public DNS (117.50.10.10)'));
+		o.depends('routing_mode', 'bypass_mainland_china');
+		o.default = '223.5.5.5';
+		o.rmempty = false;
+		o.validate = function(section_id, value) {
+			if (section_id && !['wan'].includes(value)) {
+				if (!value)
+					return _('Expecting: %s').format(_('non-empty value'));
+
+				try {
+					var url = new URL(value);
+					if (stubValidator.apply('hostname', url.hostname))
 						return true;
+					else if (stubValidator.apply('ip4addr', url.hostname))
+						return true;
+					else if (stubValidator.apply('ip6addr', url.hostname.match(/^\[(.+)\]$/)?.[1]))
+						return true;
+					else
+						return _('Expecting: %s').format(_('valid DNS server address'));
+				} catch(e) {}
 
-					if (!features.hp_has_chinadns_ng_v2 && value.length > 2)
-						return _('You can only have two servers set at maximum.');
-
-					for (var dns of value) {
-						var ipv6_support = this.map.lookupOption('ipv6_support', section_id)[0].formvalue(section_id);
-						if (dns === 'wan') {
-							continue;
-						} else {
-							var err = _('Expecting: %s').format(_('valid address#port'));
-							dns = dns.split('#');
-							if (dns.length > 2)
-								return err;
-							if (!stubValidator.apply((ipv6_support === '1') ? 'ipaddr' : 'ip4addr', dns[0]))
-								return err;
-							if (dns[1] && !stubValidator.apply('port', dns[1]))
-								return err;
-						}
-					}
-				}
-
-				return true;
+				if (!stubValidator.apply('ipaddr', value))
+					return _('Expecting: %s').format(_('valid DNS server address'));
 			}
+
+			return true;
 		}
 
 		o = s.taboption('routing', form.ListValue, 'routing_mode', _('Routing mode'));
@@ -378,6 +386,7 @@ return view.extend({
 
 		so = ss.option(form.ListValue, 'node', _('Node'),
 			_('Outbound node'));
+		so.value('urltest', _('URLTest'));
 		for (var i in proxy_nodes)
 			so.value(i, proxy_nodes[i]);
 		so.validate = L.bind(hp.validateUniqueValue, this, data[0], 'routing_node', 'node');
@@ -387,13 +396,14 @@ return view.extend({
 			_('If set, the server domain name will be resolved to IP before connecting.<br/>'));
 		for (var i in hp.dns_strategy)
 			so.value(i, hp.dns_strategy[i]);
+		so.depends({'node': 'urltest', '!reverse': true});
 		so.modalonly = true;
 
 		so = ss.option(widgets.DeviceSelect, 'bind_interface', _('Bind interface'),
 			_('The network interface to bind to.'));
 		so.multiple = false;
 		so.noaliases = true;
-		so.depends('outbound', '');
+		so.depends({'outbound': '', 'node': /^((?!urltest$).)+$/});
 		so.modalonly = true;
 
 		so = ss.option(form.ListValue, 'outbound', _('Outbound'),
@@ -416,9 +426,12 @@ return view.extend({
 
 				var conflict = false;
 				uci.sections(data[0], 'routing_node', (res) => {
-					if (res['.name'] !== section_id)
+					if (res['.name'] !== section_id) {
 						if (res.outbound === section_id && res['.name'] == value)
 							conflict = true;
+						else if (res?.urltest_nodes?.includes(node) && res['.name'] == value)
+							conflict = true;
+					}
 				});
 				if (conflict)
 					return _('Recursive outbound detected!');
@@ -426,6 +439,67 @@ return view.extend({
 
 			return true;
 		}
+		so.depends({'node': 'urltest', '!reverse': true});
+		so.editable = true;
+
+		so = ss.option(hp.CBIStaticList, 'urltest_nodes', _('URLTest nodes'),
+			_('List of nodes to test.'));
+		for (var i in proxy_nodes)
+			so.value(i, proxy_nodes[i]);
+		so.depends('node', 'urltest');
+		so.modalonly = true;
+
+		so = ss.option(form.Value, 'urltest_url', _('Test URL'),
+			_('The URL to test. <code>https://www.gstatic.com/generate_204</code> will be used if empty.'));
+		so.validate = function(section_id, value) {
+			if (section_id && value) {
+				try {
+					var url = new URL(value);
+					if (!url.hostname)
+						return _('Expecting: %s').format(_('valid URL'));
+				}
+				catch(e) {
+					return _('Expecting: %s').format(_('valid URL'));
+				}
+			}
+
+			return true;
+		}
+		so.depends('node', 'urltest');
+		so.modalonly = true;
+
+		so = ss.option(form.Value, 'urltest_interval', _('Test interval'),
+			_('The test interval in seconds. <code>180</code> will be used if empty.'));
+		so.datatype = 'uinteger';
+		so.validate = function(section_id, value) {
+			if (section_id && value) {
+				var idle_timeout = this.map.lookupOption('urltest_idle_timeout', section_id)[0].formvalue(section_id) || '1800';
+				if (parseInt(value) > parseInt(idle_timeout))
+					return _('Test interval must be less or equal than idle timeout.');
+			}
+
+			return true;
+		}
+		so.depends('node', 'urltest');
+		so.modalonly = true;
+
+		so = ss.option(form.Value, 'urltest_tolerance', _('Test tolerance'),
+			_('The test tolerance in milliseconds. <code>50</code> will be used if empty.'));
+		so.datatype = 'uinteger';
+		so.depends('node', 'urltest');
+		so.modalonly = true;
+
+		so = ss.option(form.Value, 'urltest_idle_timeout', _('Idle timeout'),
+			_('The idle timeout in seconds. <code>1800</code> will be used if empty.'));
+		so.datatype = 'uinteger';
+		so.depends('node', 'urltest');
+		so.modalonly = true;
+
+		so = ss.option(form.Flag, 'urltest_interrupt_exist_connections', _('Interrupt existing connections'),
+			_('Interrupt existing connections when the selected outbound has changed.'));
+		so.default = so.disabled;
+		so.depends('node', 'urltest');
+		so.modalonly = true;
 		/* Routing nodes end */
 
 		/* Routing rules start */
@@ -480,31 +554,25 @@ return view.extend({
 
 		so = ss.taboption('field_other', form.MultiValue, 'protocol', _('Protocol'),
 			_('Sniffed protocol, see <a target="_blank" href="https://sing-box.sagernet.org/configuration/route/sniff/">Sniff</a> for details.'));
-		if (features.version.localeCompare('1.10.0', undefined, { numeric: true, sensitivity: 'base' }) >= 0)
-			so.value('bittorrent', _('BitTorrent'));
+		so.value('bittorrent', _('BitTorrent'));
 		so.value('dns', _('DNS'));
-		if (features.version.localeCompare('1.10.0', undefined, { numeric: true, sensitivity: 'base' }) >= 0)
-			so.value('dtls', _('DTLS'));
+		so.value('dtls', _('DTLS'));
 		so.value('http', _('HTTP'));
 		so.value('quic', _('QUIC'));
-		if (features.version.localeCompare('1.10.0', undefined, { numeric: true, sensitivity: 'base' }) >= 0) {
-			so.value('rdp', _('RDP'));
-			so.value('ssh', _('SSH'));
-		}
+		so.value('rdp', _('RDP'));
+		so.value('ssh', _('SSH'));
 		so.value('stun', _('STUN'));
 		so.value('tls', _('TLS'));
 
-		if (features.version.localeCompare('1.10.0', undefined, { numeric: true, sensitivity: 'base' }) >= 0) {
-			so = ss.taboption('field_other', form.Value, 'client', _('Client'),
-				_('Sniffed client type (QUIC client type or SSH client name).'));
-			so.value('chromium', _('Chromium / Cronet'));
-			so.value('firefox', _('Firefox / uquic firefox'));
-			so.value('quic-go', _('quic-go / uquic chrome'));
-			so.value('safari', _('Safari / Apple Network API'));
-			so.depends('protocol', 'quic');
-			so.depends('protocol', 'ssh');
-			so.modalonly = true;
-		}
+		so = ss.taboption('field_other', form.Value, 'client', _('Client'),
+			_('Sniffed client type (QUIC client type or SSH client name).'));
+		so.value('chromium', _('Chromium / Cronet'));
+		so.value('firefox', _('Firefox / uquic firefox'));
+		so.value('quic-go', _('quic-go / uquic chrome'));
+		so.value('safari', _('Safari / Apple Network API'));
+		so.depends('protocol', 'quic');
+		so.depends('protocol', 'ssh');
+		so.modalonly = true;
 
 		so = ss.taboption('field_other', form.ListValue, 'network', _('Network'));
 		so.value('tcp', _('TCP'));
@@ -578,23 +646,20 @@ return view.extend({
 			_('Match process path.'));
 		so.modalonly = true;
 
-		if (features.version.localeCompare('1.10.0', undefined, { numeric: true, sensitivity: 'base' }) >= 0) {
-			so = ss.taboption('field_other', form.DynamicList, 'process_path_regex', _('Process path (regex)'),
-				_('Match process path using regular expression.'));
-			so.modalonly = true;
-		}
+		so = ss.taboption('field_other', form.DynamicList, 'process_path_regex', _('Process path (regex)'),
+			_('Match process path using regular expression.'));
+		so.modalonly = true;
 
 		so = ss.taboption('field_other', form.DynamicList, 'user', _('User'),
 			_('Match user name.'));
 		so.modalonly = true;
 
-		so = ss.taboption('field_other', form.MultiValue, 'rule_set', _('Rule set'),
+		so = ss.taboption('field_other', hp.CBIStaticList, 'rule_set', _('Rule set'),
 			_('Match rule set.'));
 		so.load = function(section_id) {
 			delete this.keylist;
 			delete this.vallist;
 
-			this.value('', _('-- Please choose --'));
 			uci.sections(data[0], 'ruleset', (res) => {
 				if (res.enabled === '1')
 					this.value(res['.name'], res.label);
@@ -682,12 +747,11 @@ return view.extend({
 		so = ss.option(form.Flag, 'cache_file_store_rdrc', _('Store RDRC'),
 			_('Store rejected DNS response cache.<br/>' +
 			'The check results of <code>Address filter DNS rule items</code> will be cached until expiration.'));
-		so.ucisection = 'experimental';
 		so.default = so.disabled;
 
 		so = ss.option(form.Value, 'cache_file_rdrc_timeout', _('RDRC timeout'),
-			_('Timeout of rejected DNS response cache. <code>7d</code> is used by default.'));
-		so.ucisection = 'experimental';
+			_('Timeout of rejected DNS response cache in seconds. <code>604800 (7d)</code> is used by default.'));
+		so.datatype = 'uinteger';
 		so.depends('cache_file_store_rdrc', '1');
 		/* DNS settings end */
 
@@ -716,8 +780,31 @@ return view.extend({
 		so.editable = true;
 
 		so = ss.option(form.Value, 'address', _('Address'),
-			_('The address of the dns server. Support UDP, TCP, DoT, DoH and RCode.'));
+			_('The address of the dns server. Support UDP, TCP, DoH, DoQ, DoT and RCode.'));
 		so.rmempty = false;
+		so.validate = function(section_id, value) {
+			if (section_id) {
+				if (!value)
+					return _('Expecting: %s').format(_('non-empty value'));
+
+				try {
+					var url = new URL(value);
+					if (stubValidator.apply('hostname', url.hostname))
+						return true;
+					else if (stubValidator.apply('ip4addr', url.hostname))
+						return true;
+					else if (stubValidator.apply('ip6addr', url.hostname.match(/^\[(.+)\]$/)?.[1]))
+						return true;
+					else
+						return _('Expecting: %s').format(_('valid DNS server address'));
+				} catch(e) {}
+
+				if (!stubValidator.apply('ipaddr', value))
+					return _('Expecting: %s').format(_('valid DNS server address'));
+			}
+
+			return true;
+		}
 
 		so = ss.option(form.ListValue, 'address_resolver', _('Address resolver'),
 			_('Tag of a another server to resolve the domain name in the address. Required if address contains domain.'));
@@ -761,6 +848,7 @@ return view.extend({
 			_('Default domain strategy for resolving the domain names.'));
 		for (var i in hp.dns_strategy)
 			so.value(i, hp.dns_strategy[i]);
+		so.editable = true;
 
 		so = ss.option(form.ListValue, 'outbound', _('Outbound'),
 			_('Tag of an outbound for connecting to the dns server.'));
@@ -846,16 +934,12 @@ return view.extend({
 
 		so = ss.taboption('field_other', form.MultiValue, 'protocol', _('Protocol'),
 			_('Sniffed protocol, see <a target="_blank" href="https://sing-box.sagernet.org/configuration/route/sniff/">Sniff</a> for details.'));
-		if (features.version.localeCompare('1.10.0', undefined, { numeric: true, sensitivity: 'base' }) >= 0) {
-			so.value('bittorrent', _('BitTorrent'));
-			so.value('dtls', _('DTLS'));
-		}
+		so.value('bittorrent', _('BitTorrent'));
+		so.value('dtls', _('DTLS'));
 		so.value('http', _('HTTP'));
 		so.value('quic', _('QUIC'));
-		if (features.version.localeCompare('1.10.0', undefined, { numeric: true, sensitivity: 'base' }) >= 0) {
-			so.value('rdp', _('RDP'));
-			so.value('ssh', _('SSH'));
-		}
+		so.value('rdp', _('RDP'));
+		so.value('ssh', _('SSH'));
 		so.value('stun', _('STUN'));
 		so.value('tls', _('TLS'));
 
@@ -924,23 +1008,20 @@ return view.extend({
 			_('Match process path.'));
 		so.modalonly = true;
 
-		if (features.version.localeCompare('1.10.0', undefined, { numeric: true, sensitivity: 'base' }) >= 0) {
-			so = ss.taboption('field_other', form.DynamicList, 'process_path_regex', _('Process path (regex)'),
-				_('Match process path using regular expression.'));
-			so.modalonly = true;
-		}
+		so = ss.taboption('field_other', form.DynamicList, 'process_path_regex', _('Process path (regex)'),
+			_('Match process path using regular expression.'));
+		so.modalonly = true;
 
 		so = ss.taboption('field_other', form.DynamicList, 'user', _('User'),
 			_('Match user name.'));
 		so.modalonly = true;
 
-		so = ss.taboption('field_other', form.MultiValue, 'rule_set', _('Rule set'),
+		so = ss.taboption('field_other', hp.CBIStaticList, 'rule_set', _('Rule set'),
 			_('Match rule set.'));
 		so.load = function(section_id) {
 			delete this.keylist;
 			delete this.vallist;
 
-			this.value('', _('-- Please choose --'));
 			uci.sections(data[0], 'ruleset', (res) => {
 				if (res.enabled === '1')
 					this.value(res['.name'], res.label);
@@ -955,12 +1036,10 @@ return view.extend({
 		so.default = so.disabled;
 		so.modalonly = true;
 
-		if (features.version.localeCompare('1.10.0', undefined, { numeric: true, sensitivity: 'base' }) >= 0) {
-			so = ss.taboption('field_other', form.Flag, 'rule_set_ip_cidr_accept_empty', _('Accept empty query response'),
-				_('Make IP CIDR in rule-sets accept empty query response.'));
-			so.default = so.disabled;
-			so.modalonly = true;
-		}
+		so = ss.taboption('field_other', form.Flag, 'rule_set_ip_cidr_accept_empty', _('Accept empty query response'),
+			_('Make IP CIDR in rule-sets accept empty query response.'));
+		so.default = so.disabled;
+		so.modalonly = true;
 
 		so = ss.taboption('field_other', form.Flag, 'invert', _('Invert'),
 			_('Invert match result.'));
@@ -1022,7 +1101,7 @@ return view.extend({
 		/* Custom routing settings end */
 
 		/* Rule set settings start */
-		s.tab('ruleset', _('Rule set'));
+		s.tab('ruleset', _('Rule Set'));
 		o = s.taboption('ruleset', form.SectionValue, '_ruleset', form.GridSection, 'ruleset');
 		o.depends('routing_mode', 'custom');
 

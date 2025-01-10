@@ -59,6 +59,9 @@ mv /usr/share/linshi/passwall /etc/config/
 mv /usr/share/linshi/shadowsocksr /etc/config/
 #mv /usr/share/linshi/nft-qos /etc/config/
 
+# 加入啓動項
+sed -i "/exit 0/i \	ethtool -s eth0 speed 2500 duplex full\n	ethtool -s eth1 speed 2500 duplex full\n" /etc/rc.local
+
 # 修复SSR Plus+不能订阅V2RAY机场有alterid>0的v2ray节点
 #sed -i "/document.getElementsByName('cbid.shadowsocksr.' + sid + '.server_port')\[0\].value = ssm.port;/a\ \t\t\tdocument.getElementsByName('cbid.shadowsocksr.' + sid + '.alter_id')\[0\].value = ssm.aid; " /usr/lib/lua/luci/view/shadowsocksr/ssrurl.htm
 #line=`sed -n '/if info.aid and (tonumber(info.aid) > 0) then/=' /usr/share/shadowsocksr/subscribe.lua `
