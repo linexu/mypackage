@@ -176,17 +176,3 @@ config host
 	option ip '192.168.1.133'
 	option leasetime 'infinite'
 
-config host
-	option name 'OpenWRT-200'
-	option dns '1'
-	option mac 'bc:24:11:5f:74:78'
-	option ip '192.168.1.200'
-	option leasetime 'infinite'
-
-config host
-	option name 'OpenWRT-200'
-	option dns '1'
-	option leasetime 'infinite'
-	option mac 'BC:24:11:D7:7A:20'
-	option ip '192.168.1.2'
-
