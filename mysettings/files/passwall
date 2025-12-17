@@ -1,0 +1,559 @@
+
+config global
+	option enabled '0'
+	option socks_enabled '0'
+	option filter_proxy_ipv6 '1'
+	option dns_shunt 'chinadns-ng'
+	option dns_mode 'tcp'
+	option remote_dns '1.1.1.1'
+	option chinadns_ng_default_tag 'none'
+	option dns_redirect '1'
+	option chn_list 'direct'
+	option tcp_proxy_mode 'proxy'
+	option udp_proxy_mode 'proxy'
+	option localhost_proxy '1'
+	option client_proxy '1'
+	option acl_enable '0'
+	option log_tcp '0'
+	option log_udp '0'
+	option loglevel 'error'
+	option trojan_loglevel '4'
+	option log_chinadns_ng '0'
+	option flush_set '1'
+
+config global_haproxy
+	option balancing_enable '0'
+
+config global_delay
+	option start_daemon '1'
+	option start_delay '60'
+
+config global_forwarding
+	option tcp_no_redir_ports 'disable'
+	option udp_no_redir_ports 'disable'
+	option tcp_proxy_drop_ports 'disable'
+	option udp_proxy_drop_ports '443'
+	option tcp_redir_ports '22,25,53,143,465,587,853,993,995,80,443'
+	option udp_redir_ports '1:65535'
+	option accept_icmp '0'
+	option use_nft '0'
+	option tcp_proxy_way 'redirect'
+	option ipv6_tproxy '0'
+
+config global_xray
+	option sniffing_override_dest '0'
+
+config global_singbox
+	option sniff_override_destination '0'
+	option geoip_path '/usr/share/singbox/geoip.db'
+	option geoip_url 'https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.db'
+	option geosite_path '/usr/share/singbox/geosite.db'
+	option geosite_url 'https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.db'
+
+config global_other
+	option auto_detection_time 'tcping'
+
+config global_rules
+	option auto_update '0'
+	option chnlist_update '1'
+	option chnroute_update '1'
+	option chnroute6_update '1'
+	option gfwlist_update '1'
+	option geosite_update '1'
+	option geoip_update '1'
+	list gfwlist_url 'https://fastly.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/gfw.txt'
+	list chnroute_url 'https://ispip.clang.cn/all_cn.txt'
+	list chnroute_url 'https://fastly.jsdelivr.net/gh/gaoyifan/china-operator-ip@ip-lists/china.txt'
+	list chnroute6_url 'https://ispip.clang.cn/all_cn_ipv6.txt'
+	list chnroute6_url 'https://fastly.jsdelivr.net/gh/gaoyifan/china-operator-ip@ip-lists/china6.txt'
+	list chnlist_url 'https://fastly.jsdelivr.net/gh/felixonmars/dnsmasq-china-list/accelerated-domains.china.conf'
+	list chnlist_url 'https://fastly.jsdelivr.net/gh/felixonmars/dnsmasq-china-list/apple.china.conf'
+	option v2ray_location_asset '/usr/share/v2ray/'
+	option enable_geoview '0'
+
+config global_app
+	option singbox_file '/usr/bin/sing-box'
+	option xray_file '/usr/bin/xray'
+	option hysteria_file '/usr/bin/hysteria'
+	option chinadns_ng '/usr/bin/chinadns-ng'
+
+config global_subscribe
+	option filter_keyword_mode '1'
+	list filter_discard_list '过期时间'
+	list filter_discard_list '剩余流量'
+	list filter_discard_list 'QQ群'
+	list filter_discard_list '官网'
+	option ss_type 'shadowsocks-libev'
+	option trojan_type 'sing-box'
+	option vmess_type 'xray'
+	option vless_type 'xray'
+	option hysteria2_type 'hysteria2'
+
+config nodes 'myshunt'
+	option remarks '分流总节点'
+	option type 'Xray'
+	option protocol '_shunt'
+	option DirectGame '_direct'
+	option ProxyGame '_default'
+	option AIGC '_default'
+	option Streaming '_default'
+	option Proxy '_default'
+	option Direct '_direct'
+	option default_node '_direct'
+	option domainStrategy 'IPOnDemand'
+
+config shunt_rules 'DirectGame'
+	option remarks 'DirectGame'
+	option domain_list 'regexp:\.cm.steampowered.com$
+regexp:\.steamserver.net$
+geosite:category-games@cn'
+	option ip_list '103.10.124.0/24
+103.10.125.0/24
+103.28.54.0/24
+146.66.152.0/24
+146.66.155.0/24
+153.254.86.0/24
+155.133.224.0/23
+155.133.226.0/24
+155.133.227.0/24
+155.133.230.0/24
+155.133.232.0/24
+155.133.233.0/24
+155.133.234.0/24
+155.133.236.0/23
+155.133.238.0/24
+155.133.239.0/24
+155.133.240.0/23
+155.133.245.0/24
+155.133.246.0/24
+155.133.248.0/24
+155.133.249.0/24
+155.133.250.0/24
+155.133.251.0/24
+155.133.252.0/24
+155.133.253.0/24
+155.133.254.0/24
+155.133.255.0/24
+162.254.192.0/24
+162.254.193.0/24
+162.254.194.0/23
+162.254.195.0/24
+162.254.196.0/24
+162.254.197.0/24
+162.254.198.0/24
+162.254.199.0/24
+185.25.182.0/24
+185.25.183.0/24
+190.217.33.0/24
+192.69.96.0/22
+205.185.194.0/24
+205.196.6.0/24
+208.64.200.0/24
+208.64.201.0/24
+208.64.202.0/24
+208.64.203.0/24
+208.78.164.0/22'
+
+config shunt_rules 'ProxyGame'
+	option remarks 'ProxyGame'
+	option domain_list 'geosite:category-games
+domain:store.steampowered.com'
+
+config shunt_rules 'AIGC'
+	option remarks 'AIGC'
+	option domain_list 'geosite:category-ai-chat-!cn
+domain:apple-relay.apple.com'
+
+config shunt_rules 'Streaming'
+	option remarks 'Streaming'
+	option domain_list 'geosite:netflix
+geosite:disney'
+
+config shunt_rules 'Proxy'
+	option remarks 'Proxy'
+	option domain_list 'geosite:geolocation-!cn'
+	option ip_list '149.154.160.0/20
+91.108.4.0/22
+91.108.56.0/24
+109.239.140.0/24
+67.198.55.0/24
+8.8.4.4
+8.8.8.8
+208.67.222.222
+208.67.220.220
+1.1.1.1
+1.1.1.2
+1.0.0.1
+9.9.9.9
+149.112.112.112
+2001:67c:4e8::/48
+2001:b28:f23c::/48
+2001:b28:f23d::/48
+2001:b28:f23f::/48
+2001:b28:f242::/48
+2001:4860:4860::8888
+2001:4860:4860::8844
+2606:4700:4700::1111
+2606:4700:4700::1001'
+
+config shunt_rules 'Direct'
+	option remarks 'Direct'
+	option domain_list 'geosite:cn'
+	option ip_list '223.5.5.5/32
+223.6.6.6/32
+119.29.29.29/32
+180.76.76.76/32
+114.114.114.114/32
+114.114.115.115/32
+1.12.12.12/32
+120.53.53.53/32
+geoip:cn
+geoip:private'
+
+config subscribe_list
+	option remark 'Github'
+	option url 'https://raw.githubusercontent.com/linexu/ssr/refs/heads/main/ssr'
+	option allowInsecure '0'
+	option filter_keyword_mode '5'
+	option ss_type 'global'
+	option trojan_type 'global'
+	option vmess_type 'global'
+	option vless_type 'global'
+	option hysteria2_type 'global'
+	option domain_strategy 'global'
+	option auto_update '0'
+	option user_agent 'v2rayN/9.99'
+
+config subscribe_list
+	option remark 'My'
+	option url 'https://xuline.us.kg/xxxxxx'
+	option allowInsecure '0'
+	option filter_keyword_mode '5'
+	option ss_type 'global'
+	option trojan_type 'global'
+	option vmess_type 'global'
+	option vless_type 'global'
+	option hysteria2_type 'global'
+	option domain_strategy 'global'
+	option auto_update '0'
+	option user_agent 'v2rayN/9.99'
+
+config nodes 'gexfZsd3'
+	option tls '0'
+	option type 'Xray'
+	option protocol 'vmess'
+	option tcp_guise 'none'
+	option security 'auto'
+	option add_from 'Github'
+	option port '30085'
+	option transport 'raw'
+	option address '129.153.117.77'
+	option remarks 'ARM1'
+	option uuid '2396cd53-9846-4a22-a5dd-02f4924b944b'
+	option timeout '60'
+	option add_mode '2'
+
+config nodes 'QX3n8lBq'
+	option tls '0'
+	option type 'Xray'
+	option protocol 'vmess'
+	option tcp_guise 'none'
+	option security 'auto'
+	option add_from 'Github'
+	option port '21606'
+	option transport 'raw'
+	option address '152.70.139.31'
+	option remarks 'ARM2'
+	option uuid 'f67cab97-d559-4437-a0d2-75005d615052'
+	option timeout '60'
+	option add_mode '2'
+
+config nodes 'yRx4jGFh'
+	option tls '0'
+	option type 'Xray'
+	option timeout '60'
+	option tcp_guise 'none'
+	option security 'auto'
+	option transport 'raw'
+	option add_from 'Github'
+	option port '26262'
+	option uuid 'd03317f4-fb94-416b-fd38-998720c7987a'
+	option address '132.226.155.56'
+	option remarks 'AMD1'
+	option protocol 'vmess'
+	option alter_id '0'
+	option add_mode '2'
+
+config nodes 'yF9vyKOV'
+	option tls '0'
+	option type 'Xray'
+	option timeout '60'
+	option tcp_guise 'none'
+	option security 'auto'
+	option transport 'raw'
+	option add_from 'Github'
+	option port '29892'
+	option uuid 'd677b0bd-d8c4-4f90-8f0a-59aa838ec953'
+	option address '129.146.145.214'
+	option remarks 'AMD2'
+	option protocol 'vmess'
+	option alter_id '0'
+	option add_mode '2'
+
+config nodes 'YE3QjBIg'
+	option tls '0'
+	option type 'Xray'
+	option timeout '60'
+	option tcp_guise 'none'
+	option security 'auto'
+	option transport 'raw'
+	option add_from 'Github'
+	option port '33151'
+	option uuid '8d251040-90de-4d8b-b222-f701898544a6'
+	option address '209.141.32.237'
+	option remarks 'LasVegas-1'
+	option protocol 'vmess'
+	option alter_id '0'
+	option add_mode '2'
+
+config nodes 'gWI8ivnG'
+	option tls '0'
+	option type 'Xray'
+	option timeout '60'
+	option tcp_guise 'none'
+	option security 'auto'
+	option transport 'raw'
+	option add_from 'Github'
+	option port '39393'
+	option uuid 'dc7a2de6-6022-4832-a29a-260d551469ac'
+	option address '148.135.80.3'
+	option remarks 'LosAngeles-DC2-1'
+	option protocol 'vmess'
+	option alter_id '0'
+	option add_mode '2'
+
+config nodes '1ElXCaNY'
+	option tls '0'
+	option type 'Xray'
+	option protocol 'vless'
+	option tcp_guise 'none'
+	option tls_allowInsecure '0'
+	option add_from 'Github'
+	option encryption 'none'
+	option port '25752'
+	option transport 'raw'
+	option address '192.168.1.250'
+	option remarks 'LosAngeles-DC2-2'
+	option uuid 'd082b6f3-80a1-4197-f409-eb56a0c25d77'
+	option timeout '60'
+	option add_mode '2'
+
+config nodes 'CwisX67T'
+	option tls '1'
+	option protocol 'vless'
+	option encryption 'none'
+	option add_from 'My'
+	option port '443'
+	option ws_path '/?ed=2560'
+	option remarks 'CF随机节点'
+	option add_mode '2'
+	option ws_host 'xuline.us.kg'
+	option type 'Xray'
+	option timeout '60'
+	option fingerprint 'random'
+	option tls_serverName 'xuline.us.kg'
+	option address '103.21.244.54'
+	option tls_allowInsecure '0'
+	option uuid '4eaecc33-a866-4be9-aead-6c6a2b78b291'
+	option transport 'ws'
+
+config nodes '89OJmUjM'
+	option tls '1'
+	option protocol 'vless'
+	option encryption 'none'
+	option add_from 'My'
+	option port '443'
+	option ws_path '/?ed=2560'
+	option remarks 'CF随机节点'
+	option add_mode '2'
+	option ws_host 'xuline.us.kg'
+	option type 'Xray'
+	option timeout '60'
+	option fingerprint 'random'
+	option tls_serverName 'xuline.us.kg'
+	option address '104.16.176.101'
+	option tls_allowInsecure '0'
+	option uuid '4eaecc33-a866-4be9-aead-6c6a2b78b291'
+	option transport 'ws'
+
+config nodes 'wQ3hjeRa'
+	option tls '1'
+	option protocol 'vless'
+	option encryption 'none'
+	option add_from 'My'
+	option port '443'
+	option ws_path '/?ed=2560'
+	option remarks 'CF随机节点'
+	option add_mode '2'
+	option ws_host 'xuline.us.kg'
+	option type 'Xray'
+	option timeout '60'
+	option fingerprint 'random'
+	option tls_serverName 'xuline.us.kg'
+	option address '104.24.73.34'
+	option tls_allowInsecure '0'
+	option uuid '4eaecc33-a866-4be9-aead-6c6a2b78b291'
+	option transport 'ws'
+
+config nodes 'IK7DEECb'
+	option tls '1'
+	option protocol 'vless'
+	option encryption 'none'
+	option add_from 'My'
+	option port '443'
+	option ws_path '/?ed=2560'
+	option remarks 'CF随机节点'
+	option add_mode '2'
+	option ws_host 'xuline.us.kg'
+	option type 'Xray'
+	option timeout '60'
+	option fingerprint 'random'
+	option tls_serverName 'xuline.us.kg'
+	option address '172.64.3.217'
+	option tls_allowInsecure '0'
+	option uuid '4eaecc33-a866-4be9-aead-6c6a2b78b291'
+	option transport 'ws'
+
+config nodes 'vTf90ECa'
+	option tls '1'
+	option protocol 'vless'
+	option encryption 'none'
+	option add_from 'My'
+	option port '443'
+	option ws_path '/?ed=2560'
+	option remarks 'CF随机节点'
+	option add_mode '2'
+	option ws_host 'xuline.us.kg'
+	option type 'Xray'
+	option timeout '60'
+	option fingerprint 'random'
+	option tls_serverName 'xuline.us.kg'
+	option address '103.21.245.188'
+	option tls_allowInsecure '0'
+	option uuid '4eaecc33-a866-4be9-aead-6c6a2b78b291'
+	option transport 'ws'
+
+config nodes 'R2m10yaV'
+	option tls '1'
+	option protocol 'vless'
+	option encryption 'none'
+	option add_from 'My'
+	option port '443'
+	option ws_path '/?ed=2560'
+	option remarks 'CF随机节点'
+	option add_mode '2'
+	option ws_host 'xuline.us.kg'
+	option type 'Xray'
+	option timeout '60'
+	option fingerprint 'random'
+	option tls_serverName 'xuline.us.kg'
+	option address '104.16.125.45'
+	option tls_allowInsecure '0'
+	option uuid '4eaecc33-a866-4be9-aead-6c6a2b78b291'
+	option transport 'ws'
+
+config nodes '07B7k7Qy'
+	option tls '1'
+	option protocol 'vless'
+	option encryption 'none'
+	option add_from 'My'
+	option port '443'
+	option ws_path '/?ed=2560'
+	option remarks 'CF随机节点'
+	option add_mode '2'
+	option ws_host 'xuline.us.kg'
+	option type 'Xray'
+	option timeout '60'
+	option fingerprint 'random'
+	option tls_serverName 'xuline.us.kg'
+	option address '104.24.39.172'
+	option tls_allowInsecure '0'
+	option uuid '4eaecc33-a866-4be9-aead-6c6a2b78b291'
+	option transport 'ws'
+
+config nodes 'Q1Gw7cwV'
+	option tls '1'
+	option protocol 'vless'
+	option encryption 'none'
+	option add_from 'My'
+	option port '443'
+	option ws_path '/?ed=2560'
+	option remarks 'CF随机节点'
+	option add_mode '2'
+	option ws_host 'xuline.us.kg'
+	option type 'Xray'
+	option timeout '60'
+	option fingerprint 'random'
+	option tls_serverName 'xuline.us.kg'
+	option address '141.101.93.213'
+	option tls_allowInsecure '0'
+	option uuid '4eaecc33-a866-4be9-aead-6c6a2b78b291'
+	option transport 'ws'
+
+config nodes '1A8WLrDS'
+	option tls '1'
+	option protocol 'vless'
+	option encryption 'none'
+	option add_from 'My'
+	option port '443'
+	option ws_path '/?ed=2560'
+	option remarks 'CF随机节点'
+	option add_mode '2'
+	option ws_host 'xuline.us.kg'
+	option type 'Xray'
+	option timeout '60'
+	option fingerprint 'random'
+	option tls_serverName 'xuline.us.kg'
+	option address '172.64.245.79'
+	option tls_allowInsecure '0'
+	option uuid '4eaecc33-a866-4be9-aead-6c6a2b78b291'
+	option transport 'ws'
+
+config nodes '3k29p9fD'
+	option tls '1'
+	option protocol 'vless'
+	option encryption 'none'
+	option add_from 'My'
+	option port '443'
+	option ws_path '/?ed=2560'
+	option remarks 'CF随机节点'
+	option add_mode '2'
+	option ws_host 'xuline.us.kg'
+	option type 'Xray'
+	option timeout '60'
+	option fingerprint 'random'
+	option tls_serverName 'xuline.us.kg'
+	option address '188.114.97.255'
+	option tls_allowInsecure '0'
+	option uuid '4eaecc33-a866-4be9-aead-6c6a2b78b291'
+	option transport 'ws'
+
+config nodes 'ED0vJZB0'
+	option tls '1'
+	option protocol 'vless'
+	option encryption 'none'
+	option add_from 'My'
+	option port '443'
+	option ws_path '/?ed=2560'
+	option remarks 'CF随机节点'
+	option add_mode '2'
+	option ws_host 'xuline.us.kg'
+	option type 'Xray'
+	option timeout '60'
+	option fingerprint 'random'
+	option tls_serverName 'xuline.us.kg'
+	option address '190.93.240.46'
+	option tls_allowInsecure '0'
+	option uuid '4eaecc33-a866-4be9-aead-6c6a2b78b291'
+	option transport 'ws'
+
