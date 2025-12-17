@@ -1,0 +1,14 @@
+{
+	"admin/services/vlmcsd": {
+		"title": "Vlmcsd KMS Server",
+		"order": 200,
+		"action": {
+			"type": "view",
+			"path": "vlmcsd"
+		},
+		"depends": {
+			"acl": [ "luci-app-vlmcsd" ],
+			"uci": { "vlmcsd": true }
+		}
+	}
+}
