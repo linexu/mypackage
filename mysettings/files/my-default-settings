@@ -12,6 +12,9 @@
 #EOF
 #uci commit system
 
+# 加入網關
+sed -i "/192.168.1.254/a\\\toption gateway '127.0.0.1'" /etc/config/network
+
 # 修改后台地址、PPPOE拨号账号密码
 #uci -q batch <<-EOF
 #	set network.lan.ipaddr='192.168.1.254'
