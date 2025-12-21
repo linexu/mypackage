@@ -19,6 +19,7 @@ config dnsmasq
 	option ednspacket_max '1232'
 	option filter_aaaa '0'
 	option filter_a '0'
+	option localuse '1'
 
 config dhcp 'lan'
 	option interface 'lan'
@@ -26,15 +27,13 @@ config dhcp 'lan'
 	option limit '150'
 	option leasetime 'infinite'
 	option dhcpv4 'server'
-	option dhcpv6 'server'
+	option dynamicdhcp '0'
 	option ra 'server'
-	option ra_slaac '1'
-	list ra_flags 'managed-config'
-	list ra_flags 'other-config'
+	option ra_preference 'medium'
+	option dhcpv6 'server'
 
 config dhcp 'wan'
 	option interface 'wan'
-	option ignore '1'
 
 config odhcpd 'odhcpd'
 	option leasefile '/tmp/odhcpd.leases'
@@ -48,151 +47,129 @@ config host
 	list mac '5C:F9:DD:76:3E:46'
 	option ip '192.168.1.100'
 	option leasetime 'infinite'
-	list match_tag 'known'
 
 config host
 	option name 'iPhone14ProMaxBlack'
 	list mac '90:EC:EA:14:7B:DA'
 	option ip '192.168.1.102'
 	option leasetime 'infinite'
-	list match_tag 'known'
 
 config host
 	option name 'DELLG3-3579-WLAN'
 	list mac '54:BF:64:1B:5D:22'
 	option ip '192.168.1.108'
 	option leasetime 'infinite'
-	list match_tag 'known'
 
 config host
 	option name 'DELLG3-3579-WIFI'
 	list mac '7C:2A:31:3F:E1:75'
 	option ip '192.168.1.109'
 	option leasetime 'infinite'
-	list match_tag 'known'
 
 config host
 	option name 'IPADPRO-14'
 	list mac 'DC:D3:A2:DB:41:E5'
 	option ip '192.168.1.110'
 	option leasetime 'infinite'
-	list match_tag 'known'
 
 config host
 	option name 'IPADPRO-15'
 	list mac 'DC:D3:A2:D2:F5:64'
 	option ip '192.168.1.111'
 	option leasetime 'infinite'
-	list match_tag 'known'
 
 config host
 	option name 'IPhoneSE'
 	list mac '50:82:D5:DF:43:71'
 	option ip '192.168.1.115'
 	option leasetime 'infinite'
-	list match_tag 'known'
 
 config host
 	option name 'SHARP60-WIFI'
 	list mac '54:27:1E:7E:DF:04'
 	option ip '192.168.1.120'
 	option leasetime 'infinite'
-	list match_tag 'known'
 
 config host
 	option name 'SHARP60'
 	list mac '24:26:42:3A:DA:0C'
 	option ip '192.168.1.121'
 	option leasetime 'infinite'
-	list match_tag 'known'
 
 config host
 	option name 'Canon-G15'
 	list mac '18:0C:AC:D7:B5:E5'
 	option ip '192.168.1.122'
 	option leasetime 'infinite'
-	list match_tag 'known'
 
 config host
 	option name 'IPhone5'
 	list mac '04:F7:E4:1B:E6:54'
 	option ip '192.168.1.123'
 	option leasetime 'infinite'
-	list match_tag 'known'
 
 config host
 	option name 'IPadAir'
 	list mac '90:B9:31:EA:55:B6'
 	option ip '192.168.1.130'
 	option leasetime 'infinite'
-	list match_tag 'known'
 
 config host
 	option name 'INSPIRON-N4050-WIFI'
 	list mac 'E0:06:E6:AD:07:12'
 	option ip '192.168.1.131'
 	option leasetime 'infinite'
-	list match_tag 'known'
 
 config host
 	option name 'INSPIRON-N4050'
 	list mac '78:45:C4:A5:66:96'
 	option ip '192.168.1.132'
 	option leasetime 'infinite'
-	list match_tag 'known'
 
 config host
 	option name 'Debian13.2-Home'
 	list mac 'BC:24:11:CD:C3:3E'
 	option ip '192.168.1.250'
 	option leasetime 'infinite'
-	list match_tag 'known'
 
 config host
 	option name 'Debian13.2'
 	list mac 'BC:24:11:FA:34:25'
 	option ip '192.168.1.251'
 	option leasetime 'infinite'
-	list match_tag 'known'
 
 config host
 	option name 'Debian13.2-Test'
 	list mac 'BC:24:11:FF:0E:6C'
 	option ip '192.168.1.252'
 	option leasetime 'infinite'
-	list match_tag 'known'
 
 config host
 	option name 'Debian'
 	list mac '00:0C:29:1B:27:34'
 	option ip '192.168.1.133'
 	option leasetime 'infinite'
-	list match_tag 'known'
 
 config host
 	option name 'OpenWRT-200'
 	list mac 'bc:24:11:5f:74:78'
 	option ip '192.168.1.200'
 	option leasetime 'infinite'
-	list match_tag 'known'
 
 config host
 	option name 'WIN10'
-	option leasetime 'infinite'
 	list mac '00:0C:29:82:66:73'
 	option ip '192.168.1.10'
-	list match_tag 'known'
+	option leasetime 'infinite'
 
 config host
 	option name 'WIN11'
-	option leasetime 'infinite'
 	list mac 'BC:24:11:15:77:FD'
 	option ip '192.168.1.11'
-	list match_tag 'known'
+	option leasetime 'infinite'
 
 config host
 	option name 'menghang'
-	option leasetime 'infinite'
 	list mac '5E:D8:24:85:32:AF'
 	option ip '192.168.1.116'
-	list match_tag 'known'
+	option leasetime 'infinite'
