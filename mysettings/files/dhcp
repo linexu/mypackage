@@ -19,7 +19,6 @@ config dnsmasq
 	option ednspacket_max '1232'
 	option filter_aaaa '0'
 	option filter_a '0'
-	option localuse '1'
 
 config dhcp 'lan'
 	option interface 'lan'
@@ -27,13 +26,16 @@ config dhcp 'lan'
 	option limit '150'
 	option leasetime 'infinite'
 	option dhcpv4 'server'
-	option dynamicdhcp '0'
-	option ra 'server'
-	option ra_preference 'medium'
 	option dhcpv6 'server'
+	option ra 'server'
+	option ra_slaac '1'
+	list ra_flags 'managed-config'
+	list ra_flags 'other-config'
+	option dynamicdhcp '0'
 
 config dhcp 'wan'
 	option interface 'wan'
+	option ignore '1'
 
 config odhcpd 'odhcpd'
 	option leasefile '/tmp/odhcpd.leases'
@@ -173,3 +175,4 @@ config host
 	list mac '5E:D8:24:85:32:AF'
 	option ip '192.168.1.116'
 	option leasetime 'infinite'
+
