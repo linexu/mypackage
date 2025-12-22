@@ -57,14 +57,17 @@ sed -i "/192.168.1.254/a\\\toption gateway '127.0.0.1'" /etc/config/network
 
 # 配置DHCP和SSR+
 mv /usr/share/linshi/dhcp /etc/config/
-#mv /usr/share/linshi/homeproxy /etc/config/
-#mv /usr/share/linshi/passwall /etc/config/
 mv /usr/share/linshi/shadowsocksr /etc/config/
+#mv /usr/share/linshi/passwall /etc/config/
+#mv /usr/share/linshi/passwall2 /etc/config/
+#mv /usr/share/linshi/homeproxy /etc/config/
 #mv /usr/share/linshi/nft-qos /etc/config/
 
 # 修改SSR Plus+每天订阅的時間分鐘為 XX:33分
-sed -i 's/o:value(t, t .. ":00")/o:value(t, t .. ":33")/' /usr/lib/lua/luci/model/cbi/shadowsocksr/servers.lua
-sed -i 's/o:value(i, i .. ":00")/o:value(i, i .. ":33")/' /usr/lib/lua/luci/model/cbi/shadowsocksr/servers.lua
+#sed -i 's/0 \$(uci_get_by_type/51 \$(uci_get_by_type/' /etc/init.d/shadowsocksr
+
+#sed -i 's/o:value(t, t .. ":00")/o:value(t, t .. ":33")/' /usr/lib/lua/luci/model/cbi/shadowsocksr/servers.lua
+#sed -i 's/o:value(i, i .. ":00")/o:value(i, i .. ":33")/' /usr/lib/lua/luci/model/cbi/shadowsocksr/servers.lua
 
 # 加入啓動項
 #sed -i "/exit 0/i \	ethtool -s eth0 speed 2500 duplex full\n	ethtool -s eth1 speed 2500 duplex full\n" /etc/rc.local
