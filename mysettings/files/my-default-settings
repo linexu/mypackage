@@ -5,24 +5,28 @@
 #uci commit luci
 
 # 设置主机名称、时区
-#uci -q batch <<-EOF
-#	set system.@system[0].hostname='OpenWrt'
-#	set system.@system[0].timezone='CST-8'
-#	set system.@system[0].zonename='Asia/Shanghai'
-#EOF
-#uci commit system
+uci -q batch <<-EOF
+	set system.@system[0].hostname='OpenWrt'
+	set system.@system[0].timezone='CST-8'
+	set system.@system[0].zonename='Asia/Shanghai'
+EOF
+uci commit system
+
+# 修改后台地址、PPPOE拨号账号密码、加入網關 127.0.0.1
+uci -q batch <<-EOF
+	set network.lan.ipaddr='192.168.1.254'
+	set network.lan.gateway='127.0.0.1'
+	set network.wan.proto='pppoe'
+	set network.wan.username='02985412735'
+	set network.wan.password='a486200'
+EOF
+uci commit network
+
+# 運行固件自動 pppoe 撥號
+sed -i "s/2:-dhcp/2:-pppoe/g" /lib/functions/uci-defaults.sh
 
 # 加入網關
-sed -i "/192.168.1.254/a\\\toption gateway '127.0.0.1'" /etc/config/network
-
-# 修改后台地址、PPPOE拨号账号密码
-#uci -q batch <<-EOF
-#	set network.lan.ipaddr='192.168.1.254'
-#	set network.wan.proto='pppoe'
-#	set network.wan.username='02985412735'
-#	set network.wan.password='a486200'
-#EOF
-#uci commit network
+#sed -i "/192.168.1.254/a\\\toption gateway '127.0.0.1'" /etc/config/network
 
 # 修改DNS
 #uci set network.wan.peerdns='0'
@@ -63,11 +67,11 @@ mv /usr/share/linshi/shadowsocksr /etc/config/
 #mv /usr/share/linshi/homeproxy /etc/config/
 #mv /usr/share/linshi/nft-qos /etc/config/
 
-# 修改SSR Plus+每天订阅的時間分鐘為 XX:33分
+# 優化SSR Plus+自動更新订阅的 小時:分鐘 XX點XX分
 #sed -i 's/0 \$(uci_get_by_type/51 \$(uci_get_by_type/' /etc/init.d/shadowsocksr
 
-#sed -i 's/o:value(t, t .. ":00")/o:value(t, t .. ":33")/' /usr/lib/lua/luci/model/cbi/shadowsocksr/servers.lua
-#sed -i 's/o:value(i, i .. ":00")/o:value(i, i .. ":33")/' /usr/lib/lua/luci/model/cbi/shadowsocksr/servers.lua
+sed -i 's/o:value(t, t .. ":00")/o:value(t, t .. "")/' /usr/lib/lua/luci/model/cbi/shadowsocksr/servers.lua
+sed -i 's/o:value(i, i .. ":00")/o:value(i, i .. "")/' /usr/lib/lua/luci/model/cbi/shadowsocksr/servers.lua
 
 # 加入啓動項
 #sed -i "/exit 0/i \	ethtool -s eth0 speed 2500 duplex full\n	ethtool -s eth1 speed 2500 duplex full\n" /etc/rc.local
@@ -87,5 +91,8 @@ mv /usr/share/linshi/shadowsocksr /etc/config/
 sed -i 's#root:::0:99999:7:::#root:$5$qY781.vtG9/2AHhK$QHezq5zRqwAunTctzGwLhDHfYfsrBiY9qeSxymZCaU6:20086:0:99999:7:::#g' /etc/shadow
 sed -i 's#root::0:0:99999:7:::#root:$5$qY781.vtG9/2AHhK$QHezq5zRqwAunTctzGwLhDHfYfsrBiY9qeSxymZCaU6:20086:0:99999:7:::#g' /etc/shadow
 
+# vlmcsd 服務缺省為激活運行狀態
+sed -i "s#option enabled '0'#option enabled '1'#" /etc/config/vlmcsd
+sed -i "s#option auto_activate '0'#option auto_activate '1'#" /etc/config/vlmcsd
 
 exit 0
