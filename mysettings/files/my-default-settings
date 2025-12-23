@@ -61,7 +61,7 @@ sed -i "s/2:-dhcp/2:-pppoe/g" /lib/functions/uci-defaults.sh
 
 # 配置DHCP和SSR+
 mv /usr/share/linshi/dhcp /etc/config/
-mv /usr/share/linshi/shadowsocksr /etc/config/
+#mv /usr/share/linshi/shadowsocksr /etc/config/
 #mv /usr/share/linshi/passwall /etc/config/
 #mv /usr/share/linshi/passwall2 /etc/config/
 #mv /usr/share/linshi/homeproxy /etc/config/
@@ -92,7 +92,7 @@ sed -i 's#root:::0:99999:7:::#root:$5$qY781.vtG9/2AHhK$QHezq5zRqwAunTctzGwLhDHfY
 sed -i 's#root::0:0:99999:7:::#root:$5$qY781.vtG9/2AHhK$QHezq5zRqwAunTctzGwLhDHfYfsrBiY9qeSxymZCaU6:20086:0:99999:7:::#g' /etc/shadow
 
 # vlmcsd 服務缺省為激活運行狀態
-sed -i "s#option enabled '0'#option enabled '1'#" /etc/config/vlmcsd
-sed -i "s#option auto_activate '0'#option auto_activate '1'#" /etc/config/vlmcsd
+#sed -i "s#option enabled '0'#option enabled '1'#" /etc/config/vlmcsd
+#sed -i "s#option auto_activate '0'#option auto_activate '1'#" /etc/config/vlmcsd
 
 exit 0
