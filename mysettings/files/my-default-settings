@@ -61,7 +61,7 @@ sed -i "s/2:-dhcp/2:-pppoe/g" /lib/functions/uci-defaults.sh
 
 # 配置DHCP和SSR+
 mv /usr/share/linshi/dhcp /etc/config/
-#mv /usr/share/linshi/shadowsocksr /etc/config/
+mv /usr/share/linshi/shadowsocksr /etc/config/
 #mv /usr/share/linshi/passwall /etc/config/
 #mv /usr/share/linshi/passwall2 /etc/config/
 #mv /usr/share/linshi/homeproxy /etc/config/
